@@ -1,0 +1,3 @@
+name: ROC_AUDIO_CONV
+desc: ROC_AUDIO_CONV external layer for Milk-V Duo Buildroot SDK
+version: 0.1

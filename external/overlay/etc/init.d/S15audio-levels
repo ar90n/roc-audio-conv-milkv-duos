@@ -1,0 +1,64 @@
+#!/bin/sh
+
+CONF=/etc/default/audio-levels
+[ -r "$CONF" ] && . "$CONF"
+
+command -v tinymix >/dev/null 2>&1 || exit 0
+
+: "${DAC_CARD:=1}"    # cv182xa_dac
+: "${ADC_CARD:=0}"    # cv182xa_adc
+
+: "${DAC_VOL:=16}"    # 0..32
+: "${DAC_MUTE:=0}"    # Off/On
+: "${DAC_PWR:=1}"     # On/Off
+
+: "${ADC_VOL:=12}"    # 0..24
+: "${ADC_MUTE:=off}"  # Off/On
+: "${ADC_PWR:=on}"    # On/Off
+
+log() { echo "[audio-levels] $*"; }
+
+wait_cards() {
+  i=0
+  while [ $i -lt 20 ]; do
+    tinymix -D "$DAC_CARD" contents >/dev/null 2>&1 && tinymix -D "$ADC_CARD" contents >/dev/null 2>&1 && return 0
+    sleep 0.1
+    i=$((i+1))
+  done
+  return 1
+}
+
+case "$1" in
+  start)
+    wait_cards || log "warning: ALSA cards not ready; applying anyway"
+
+    # === DAC(LineOut) ===
+    # Power
+    amixer -c "$DAC_CARD" set "DAC Playback Power Up/Down" "$DAC_PWR" 2>/dev/null || true
+    # Volume
+    amixer -c "$DAC_CARD" set "DAC" "$DAC_VOL" 2>/dev/null || true
+    # Mute
+    amixer -c "$DAC_CARD" set "DAC Playback MUTE" "$DAC_MUTE" 2>/dev/null || true
+
+    # === ADC(Mic/LineIn) ===
+    # Power
+    amixer -c "$ADC_CARD" set "ADC Power" "$ADC_PWR" 2>/dev/null || true
+    # Volume
+    amixer -c "$ADC_CARD" set "ADC" "$ADC_VOL" 2>/dev/null || true
+    # Mute
+    amixer -c "$ADC_CARD" set "ADC Capture Mute" "$ADC_MUTE" 2>/dev/null || true
+
+    # === Warm up ===
+    tinyplay /dev/zero -D 1 -d 0 -r 48000 -c 1 -b 16 -n 2
+
+    log "done (DAC card=$DAC_CARD vol=${DAC_VOL} mute=${DAC_MUTE}; ADC card=$ADC_CARD vol=${ADC_VOL} mute=${ADC_MUTE})"
+    ;;
+  stop|restart|reload)
+    ;;
+  *)
+    echo "Usage: $0 {start}"
+    exit 1
+    ;;
+esac
+exit 0
+

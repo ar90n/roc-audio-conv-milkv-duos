@@ -1,0 +1,70 @@
+#!/bin/sh
+
+NAME="roc-recv"
+PIDFILE="/var/run/${NAME}.pid"
+DEFAULTS="/etc/default/roc-aoip"
+LOGFILE="${LOGFILE:-/var/log/${NAME}.log}"
+
+[ -r "$DEFAULTS" ] && . "$DEFAULTS"
+
+command_exists() { command -v "$1" >/dev/null 2>&1; }
+have_ssd=0
+command_exists start-stop-daemon && have_ssd=1
+
+start_cmd() {
+  CMD="$ROC_RECV_BIN \
+    -s rtp+rs8m://0.0.0.0:${ROC_RECV_STREAM_PORT} \
+    -r rs8m://0.0.0.0:${ROC_RECV_REPAIR_PORT} \
+     --rate ${RATE} \
+     --resampler-backend speex \
+     --resampler-profile low \
+    -o alsa://hw:1,0"
+  if [ "$have_ssd" -eq 1 ]; then
+    start-stop-daemon --start --background --make-pidfile --pidfile "$PIDFILE" \
+      --exec /bin/sh -- -c "exec $CMD >>'$LOGFILE' 2>&1"
+  else
+    /bin/sh -c "exec $CMD >>'$LOGFILE' 2>&1 & echo \$! > '$PIDFILE'"
+  fi
+}
+
+stop_cmd() {
+  if [ -f "$PIDFILE" ]; then
+    PID="$(cat "$PIDFILE" 2>/dev/null)"
+    [ -n "$PID" ] && kill "$PID" 2>/dev/null
+    for i in 1 2 3 4 5; do
+      kill -0 "$PID" 2>/dev/null || break
+      sleep 1
+    done
+    kill -0 "$PID" 2>/dev/null && kill -9 "$PID" 2>/dev/null
+    rm -f "$PIDFILE"
+  fi
+}
+
+status_cmd() {
+  if [ -f "$PIDFILE" ]; then
+    PID="$(cat "$PIDFILE" 2>/dev/null)"
+    if [ -n "$PID" ] && kill -0 "$PID" 2>/dev/null; then
+      echo "$NAME is running (pid $PID)"
+      exit 0
+    fi
+  fi
+  echo "$NAME is not running"
+  exit 3
+}
+
+case "$1" in
+  start)
+    [ -x "$ROC_RECV_BIN" ] || { echo "missing $ROC_RECV_BIN"; exit 1; }
+    mkdir -p "$(dirname "$PIDFILE")" "$LOG_DIR"
+    touch "$LOGFILE"
+    start_cmd
+    ;;
+  stop)   stop_cmd ;;
+  restart) stop_cmd; sleep 1; start_cmd ;;
+  status) status_cmd ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|status}"
+    exit 1
+    ;;
+esac
+exit 0

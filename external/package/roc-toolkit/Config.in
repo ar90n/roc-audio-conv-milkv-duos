@@ -1,0 +1,4 @@
+config BR2_PACKAGE_ROC_TOOLKIT
+    bool "roc-toolkit (audio over IP)"
+    help
+      roc-streaming/roc-toolkit built via scons, installed under /usr.

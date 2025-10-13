@@ -1,0 +1,12 @@
+DAC_CARD=1
+ADC_CARD=0
+
+# LineOut(DAC)
+DAC_VOL=0   # 0..32
+DAC_MUTE=off
+DAC_PWR=on
+
+# LineIn(ADC)
+ADC_VOL=24   # 0..24
+ADC_MUTE=off
+ADC_PWR=on

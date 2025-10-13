@@ -1,0 +1,1 @@
+*/10 * * * * /etc/init.d/S48sntp start >/dev/null 2>&1

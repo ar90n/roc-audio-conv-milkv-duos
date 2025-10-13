@@ -1,0 +1,4 @@
+config BR2_PACKAGE_RTL8XXXU
+    bool "rtl8xxxu (out-of-tree kernel module)"
+    help
+      Realtek 8xxxu USB Wi-Fi driver from lwfinger/rtl8xxxu.

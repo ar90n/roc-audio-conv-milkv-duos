@@ -1,0 +1,17 @@
+#!/bin/sh
+export SYSTEMPATH=/mnt/system/
+
+case "$1" in
+  start)
+    sh $SYSTEMPATH/ko/loadsystemko.sh
+    ;;
+  stop)
+    ;;
+  restart)
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit 0

@@ -1,0 +1,29 @@
+# ROC / ALSA over IP - common defaults
+
+# === ALSA ===
+ALSA_IN_DEV="${ALSA_IN_DEV:-hw:0,0}"
+ALSA_OUT_DEV="${ALSA_OUT_DEV:-hw:1,0}"
+RATE="${RATE:-48000}"
+FORMAT="${FORMAT:-S16_LE}"
+CHANNELS="${CHANNELS:-1}"
+
+AREC_BUF_US="${AREC_BUF_US:-80000}"   # arecord --buffer-time
+AREC_PER_US="${AREC_PER_US:-20000}"   # arecord --period-time
+APLAY_BUF_US="${APLAY_BUF_US:-80000}" # aplay  --buffer-time
+APLAY_PER_US="${APLAY_PER_US:-20000}" # aplay  --period-time
+
+# === ROC ===
+RECEIVER_IP="10.0.0.19"
+ROC_SEND_STREAM_PORT="${ROC_SEND_STREAM_PORT:-10001}"
+ROC_SEND_REPAIR_PORT="${ROC_SEND_REPAIR_PORT:-10002}"
+
+ROC_RECV_STREAM_PORT="${ROC_RECV_STREAM_PORT:-11001}"
+ROC_RECV_REPAIR_PORT="${ROC_RECV_REPAIR_PORT:-11002}"
+
+ROC_SEND_OPTS="${ROC_SEND_OPTS:-}"
+ROC_RECV_OPTS="${ROC_RECV_OPTS:-}"
+
+ROC_SEND_BIN="${ROC_SEND_BIN:-/usr/bin/roc-send}"
+ROC_RECV_BIN="${ROC_RECV_BIN:-/usr/bin/roc-recv}"
+
+LOG_DIR="${LOG_DIR:-/var/log}"

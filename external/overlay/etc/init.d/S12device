@@ -1,0 +1,15 @@
+#!/bin/sh
+export SYSTEMPATH=/mnt/system/
+
+case "$1" in
+  start)
+    if [ -f $SYSTEMPATH/usb.sh ]; then
+        . $SYSTEMPATH/usb.sh &
+    fi
+
+    if [ -d /dev/snd ]; then
+      chgrp -R audio /dev/snd
+      chmod -R g+rw /dev/snd
+    fi
+    ;;
+esac
