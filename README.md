@@ -16,13 +16,29 @@ This project integrates [roc-toolkit](https://roc-streaming.org/) with the [Milk
 ## Requirements
 
 - Docker & Docker Compose
-- Milk-V Duo S board
+- Milk-V Duo S board (must be configured to run in RISC-V mode)
+  - **Important**: This project targets RISC-V architecture. Ensure your Milk-V Duo S is set to RISC-V mode
 - microSD card (Recommended: 8GB or larger)
 - USB Wi-Fi dongle with RTL8192EU chipset (or compatible)
   - **Note**: This project is designed for Wi-Fi usage and requires a USB Wi-Fi dongle
   - Tested with RTL8192EU-based dongles
 
 ## Setup
+
+### 0. Clone Repository
+
+First, clone the repository with submodules:
+
+```bash
+git clone --recurse-submodules https://github.com/ar90n/roc-audio-conv-milkv-duos.git
+cd roc-audio-conv-milkv-duos
+```
+
+If you've already cloned without submodules:
+
+```bash
+git submodule update --init --recursive
+```
 
 ### 1. Configure Environment Variables
 
@@ -54,11 +70,18 @@ WPA_SUPPLICANT_PSK=your_wifi_password
 ```bash
 # First time only: Initialize and download SDK
 docker compose run --rm init
+
+# Generate configuration files
+make gen
+
 # Build the image
 docker compose run --rm build
 ```
 
-After the build completes, an SD card image will be generated in the `output/` directory.
+After the build completes, the SD card image will be generated at:
+```
+vendor/duo-buildroot-sdk-v2/install/soc_sg2000_milkv_duos_musl_riscv64_sd/milkv-duos-musl-riscv64-sd.img
+```
 
 ### 3. Write to SD Card
 
@@ -66,7 +89,7 @@ Write the generated image to a microSD card:
 
 ```bash
 # Linux/macOS
-sudo dd if=output/milkv-duos-*.img of=/dev/sdX bs=4M status=progress
+sudo dd if=vendor/duo-buildroot-sdk-v2/install/soc_sg2000_milkv_duos_musl_riscv64_sd/milkv-duos-musl-riscv64-sd.img of=/dev/sdX bs=4M status=progress
 sudo sync
 ```
 
