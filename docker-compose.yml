@@ -1,17 +1,26 @@
 version: "3.9"
 
+x-base-service: &base-service
+  build:
+    context: ./docker
+    dockerfile: Dockerfile
+  image: roc-audio-conv-builder:local
+  tty: true
+  stdin_open: true
+  working_dir: /home/work
+
 services:
-  roc-audio-conv-builder:
-    container_name: roc-audio-conv-builder
-    build:
-      context: ./docker
-      dockerfile: Dockerfile
-    image: roc-audio-conv-builder:local
-    privileged: true
-    tty: true
-    stdin_open: true
-    working_dir: /home/work
-    command: /bin/bash
+  init:
+    <<: *base-service
+    container_name: roc-audio-conv-builder-init
+    command: make init
+    volumes:
+      - ./:/home/work
+
+  build:
+    <<: *base-service
+    container_name: roc-audio-conv-builder-build
+    command: make all
     volumes:
       - ./:/home/work
       - ./external/overlay:/home/work/vendor/duo-buildroot-sdk-v2/device/milkv-duos-musl-riscv64-sd/overlay

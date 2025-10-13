@@ -23,6 +23,10 @@ fetch:
 	tar xvf /tmp/duo-dl.tar -C "$(SDK_DIR)"; \
 	rm -f /tmp/duo-dl.tar
 
+.PHONY: init
+init: fetch
+	TOP=$(SDK_DIR) $(SDK_DIR)/build.sh $(SDK_TARGET_BOARD);
+
 .PHONY: gen
 gen:
 	@set -a ; \
