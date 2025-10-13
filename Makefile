@@ -46,8 +46,8 @@ savedefconfig:
 .PHONY: loaddotconfig
 loaddotconfig:
 	TOP=$(SDK_DIR) source $(SDK_DIR)/build/envsetup_milkv.sh $(SDK_TARGET_BOARD); \
+	mkdir -p $(SDK_DIR)/linux_5.10/build/$${MV_BOARD_LINK}/; \
 	cp $(BR2_EXTERNAL)/config/buildroot_dot_config $(SDK_OUTPUT_DIR)/.config; \
-	mkdir -p $(SDK_DIR)/linux_5.10/build/$${MV_BOARD_LINK}; \
 	cp $(BR2_EXTERNAL)/config/kernel_dot_config $(SDK_DIR)/linux_5.10/build/$${MV_BOARD_LINK}/.config
 
 .PHONY: syncdefconfig_kernel
