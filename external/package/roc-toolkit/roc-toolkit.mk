@@ -12,8 +12,7 @@ ROC_TOOLKIT_STR := $(HOST_DIR)/bin/$(ROC_TOOLKIT_HOST_TRIPLET)-strip
 ROC_TOOLKIT_SCONS := scons
 
 # Use system deps from Buildroot; and host ragel for codegen
-ROC_TOOLKIT_DEPENDENCIES = speexdsp libsndfile sox
-
+ROC_TOOLKIT_DEPENDENCIES = alsa-lib speexdsp libsndfile sox
 define ROC_TOOLKIT_BUILD_CMDS
     cd $(@D) && \
     export PATH="$(dir $(TARGET_CC)):$$PATH" && \
@@ -24,7 +23,6 @@ define ROC_TOOLKIT_BUILD_CMDS
         --disable-libunwind \
         --disable-openssl \
         --disable-pulseaudio \
-        --disable-sox \
         --enable-static \
         --disable-shared \
         CC="$(TARGET_CC)" \
@@ -47,7 +45,6 @@ define ROC_TOOLKIT_INSTALL_TARGET_CMDS
         --disable-libunwind \
         --disable-openssl \
         --disable-pulseaudio \
-        --disable-sox \
         --enable-static \
         --disable-shared \
         CC="$(TARGET_CC)" \

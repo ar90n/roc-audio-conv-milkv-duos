@@ -12,6 +12,9 @@ ENV_FILE := $(CURDIR)/.env
 TEMPLATE_DIR := $(BR2_EXTERNAL)/template
 OVERLAY_DIR := $(BR2_EXTERNAL)/overlay
 
+HOSTNAME=roc-audio-conv
+TIMEZONE=Asia/Tokyo
+
 export BR2_EXTERNAL
 export BR2_DL_DIR=$(DL_DIR)
 export CCACHE_DIR
@@ -46,9 +49,9 @@ savedefconfig:
 .PHONY: loaddotconfig
 loaddotconfig:
 	@set -a ; \
+        HOSTNAME=$(HOSTNAME); \
+        TIMEZONE=$(TIMEZONE); \
 	source $(ENV_FILE); \
-        HOSTNAME=${HOSTNAME:-roc-audio-conv} ; \
-        TIMEZONE=${TIMEZONE:-Asia/Tokyo} ; \
 	set +a ; \
 	TOP=$(SDK_DIR) source $(SDK_DIR)/build/envsetup_milkv.sh $(SDK_TARGET_BOARD); \
 	mkdir -p $(SDK_DIR)/linux_5.10/build/$${MV_BOARD_LINK}/; \
