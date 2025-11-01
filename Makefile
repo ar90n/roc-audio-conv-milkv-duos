@@ -45,9 +45,14 @@ savedefconfig:
 
 .PHONY: loaddotconfig
 loaddotconfig:
+	@set -a ; \
+	source $(ENV_FILE); \
+        HOSTNAME=${HOSTNAME:-roc-audio-conv} ; \
+        TIMEZONE=${TIMEZONE:-Asia/Tokyo} ; \
+	set +a ; \
 	TOP=$(SDK_DIR) source $(SDK_DIR)/build/envsetup_milkv.sh $(SDK_TARGET_BOARD); \
 	mkdir -p $(SDK_DIR)/linux_5.10/build/$${MV_BOARD_LINK}/; \
-	cp $(BR2_EXTERNAL)/config/buildroot_dot_config $(SDK_OUTPUT_DIR)/.config; \
+	envsubst < $(TEMPLATE_DIR)/buildroot_dot_config > $(SDK_OUTPUT_DIR)/.config; \
 	cp $(BR2_EXTERNAL)/config/kernel_dot_config $(SDK_DIR)/linux_5.10/build/$${MV_BOARD_LINK}/.config
 
 .PHONY: syncdefconfig_kernel
