@@ -1,3 +1,5 @@
 .dl
 .env
 external/overlay/etc/wpa_supplicant.conf
+external/overlay/home
+external/config/system-users.txt
